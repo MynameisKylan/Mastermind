@@ -5,6 +5,7 @@ class Game
     @guess_count = 1
     @code_master = code_master
     @code_breaker = code_breaker
+    @feedback = nil
   end
 
   def play
@@ -16,15 +17,15 @@ class Game
       code_breaker.human = true
     end
     code_master.choose_code
-    p code_master.code
+    #p code_master.code
     puts "Game start! Codemaster has chosen a code."
     puts "Color choices are: #{code_master.colors}"
     while !lose?
-      guess = code_breaker.get_guess
-      feedback = code_master.provide_feedback(guess)
+      guess = code_breaker.get_guess(@feedback)
+      @feedback = code_master.provide_feedback(guess)
       puts ">>>Guess ##{guess_count}: #{guess}"
-      puts ">>>Feedback: #{feedback}"
-      if win?(feedback)
+      puts ">>>Feedback: #{@feedback}"
+      if win?
         break
       end
       @guess_count += 1
@@ -39,8 +40,8 @@ class Game
   end
 
   private
-  def win?(feedback)
-    feedback == ['black'] * 4
+  def win?
+    @feedback == ['black'] * 4
   end
 
   private
@@ -107,7 +108,7 @@ class CodeBreaker
     @human = false
   end
 
-  def get_guess
+  def get_guess(feedback)
     if @human
       guess = []
       puts '>>>Enter your guess:'
